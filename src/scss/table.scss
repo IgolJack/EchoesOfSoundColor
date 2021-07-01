@@ -1,0 +1,51 @@
+.calendar__table {
+  top: 100px;
+  position: absolute;
+  left: 0;
+  right: 0;
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  & .namesOfDays{
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 5px;
+    & > span {
+      width: 100px;
+      font-weight: 500;
+    }
+  }
+
+  & .week {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    .day {
+      font-weight: 700;
+      height: 100px;
+      width: 100px;
+      padding: 5px;
+      border: 1px solid #e2e3e3;
+      border-collapse: collapse;
+      border-bottom: 0;
+      border-left: 0;
+    }
+
+    .otherDays {
+      color: lightgray;
+    }
+  }
+
+
+
+
+}
+
