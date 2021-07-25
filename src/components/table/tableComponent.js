@@ -1,6 +1,5 @@
 import {CalendarComponent} from '../../core/CalendarComponent';
-import {getDataCalendar} from '@/components/table/table.dataGetter';
-import {getTemplateCalendar} from '@/components/table/table.template';
+import {loadPrevOrNextMonth, initializationTable, putAdditionToolbar} from './table.PrevNextLoad';
 
 export class TableComponent extends CalendarComponent {
   static className = 'calendar__table'
@@ -11,58 +10,48 @@ export class TableComponent extends CalendarComponent {
     });
     this.currentDate
     this.cashe = {}
+    this.events = {}
   }
   toHtml() {
-    const data = getDataCalendar(new Date())
-    return getTemplateCalendar(data)
+    return initializationTable()
   }
 
   init() {
     super.init()
     this.formateDate()
     this.$table = this.$root.find('.table')
+    putAdditionToolbar(this);
+    this.$tableInput = this.$root.find('#tableInput')
+
+    this.$tableInput.$el.defaultValue = `${this.currentDate.getFullYear()}-0${this.currentDate.getMonth() + 1}-01`
+    this.$tableInput.on('blur', this.focusInput.bind(this))
   }
 
   onClick(event) {
-    console.log(this.currentDate);
-    if (event.target.id === 'next') {
-      const date = this.getNextMonth(this.currentDate)
-      if (this.cashe[date]) {
-        console.log('fromCashe');
-        this.$table.html(this.cashe[date])
-      }
-      const data = getDataCalendar(this.currentDate)
-      this.currentDate = date
-      this.cashe[date] = getTemplateCalendar(data)
-      this.$table.html(this.cashe[date])
-    } else if (event.target.id === 'prev') {
-      const date = this.getPrevMonth(this.currentDate)
-      if (this.cashe[date]) {
-        console.log('fromCashe');
-        this.$table.html(this.cashe[date])
-      }
-      const data = getDataCalendar(this.currentDate)
-      this.currentDate = date
-      this.cashe[date] = getTemplateCalendar(data)
-      this.$table.html(this.cashe[date])
+    if (event.target.id === 'next' || event.target.id === 'prev') {
+      loadPrevOrNextMonth(event, this)
+    } else if (event.target.classList.contains('day')) {
+      const $week = event.target.closest('.week')
+      const $event = document.createElement('div')
+      $event.classList.add('event')
+      $event.innerHTML = 'event1'
+      $week.appendChild($event)
     }
   }
 
-  formateDate(date = new Date()) {
-    const year = date.getFullYear()
-    const month = date.getMonth() + 1
-    this.currentDate = new Date(year, month)
+  formateDate(date = new Date(), day = null) {
+    if (day) {
+      return new Date(date.getFullYear(), date.getMonth(), day || 1)
+    }
+    if (this.currentDate == undefined) {
+      const year = date.getFullYear()
+      const month = date.getMonth()
+      this.currentDate = new Date(year, month)
+    }
   }
 
-  getNextMonth(currentDate) {
-    const year = currentDate.getFullYear()
-    const month = currentDate.getMonth() + 1
-    return new Date(year, month)
-  }
-
-  getPrevMonth(currentDate) {
-    const year = currentDate.getFullYear()
-    const month = currentDate.getMonth() - 1
-    return new Date(year, month)
+  focusInput(event) {
+    this.currentDate = event.target.value
+    loadPrevOrNextMonth(event, this)
   }
 }

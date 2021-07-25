@@ -17,7 +17,7 @@ export function getDataCalendar(dataStart) {
   return [days, nameOfMonth]
 }
 
-function getDayOfWeek(day) {
+export function getDayOfWeek(day) {
   switch (day) {
     case 0:
       return 6
@@ -45,8 +45,9 @@ function getDayOfWeek(day) {
 
 function prevMonth(startDate) {
   const prevDays = []
-  const day = getDayOfWeek(startDate.getDay())
-  if (day !== 0) {
+  let day = getDayOfWeek(startDate.getDay())
+  if (day >= 0) {
+    day = day === 0 ? day + 7 : day
     for (let i = 6 - day; i < 6; i++) {
       const date = new Date(startDate.setDate(startDate.getDate() - 1))
       prevDays.push({
